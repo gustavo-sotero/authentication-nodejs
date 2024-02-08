@@ -18,18 +18,20 @@ export class UserService {
     if (userExists) {
       throw new Error('Usuário já existe.');
     }
+    const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prismaClient.user.create({
       data: {
         email,
         name,
         username,
-        password
+        password: hashedPassword
       }
     });
 
     if (!user) {
       throw new Error('Não foi possível criar usuário.');
     }
+    return 'Usuário criado com sucesso.'
   };
 
   public getUser = async ({ id }: Pick<User, 'id'>) => {
@@ -67,9 +69,14 @@ export class UserService {
       throw new Error('Senha invalida.');
     }
 
-    const token = jwt.sign({ id: userExists.id, username }, 'secret_key', {
+    const access_token = jwt.sign({ id: userExists.id, username }, 'secret_key', {
       expiresIn: '1h'
     });
-    return { access_token: token, expires_in: 3600 };
+
+    const refresh_token = jwt.sign({ id: userExists.id, username }, 'secret_key', {
+      expiresIn: '7d'
+    });
+
+    return { access_token, expires_in: 3600, refresh_token };
   };
 }

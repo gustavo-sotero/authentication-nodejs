@@ -16,7 +16,7 @@ export class UserController {
         id: Number(id)
       });
       ctx.status = StatusCodes.OK;
-      ctx.body = { message };
+      ctx.body = message;
     } catch (error) {
       const errorMessage =
         (error as Error).message || 'Ocorreu um erro desconhecido.';
@@ -67,7 +67,7 @@ export class UserController {
         password
       });
       ctx.status = StatusCodes.OK;
-      ctx.body = { message };
+      ctx.body = message;
     } catch (error) {
       const errorMessage: string =
         (error as Error).message || 'Ocorreu um erro desconhecido.';

@@ -1,5 +1,6 @@
 node_modules
 # Keep environment variables out of version control
 .env
-prisma
+prisma/migrations
+prisma/data
 # src/__tests__/users.test.ts
