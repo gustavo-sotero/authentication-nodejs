@@ -3,4 +3,6 @@ node_modules
 .env
 prisma/migrations
 prisma/data
+out/
+dist/
 # src/__tests__/users.test.ts
