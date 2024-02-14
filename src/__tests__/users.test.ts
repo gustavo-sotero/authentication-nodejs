@@ -2,37 +2,27 @@ import request from 'supertest';
 import { app } from '../app'; // Importe seu aplicativo Koa
 
 describe('Autenticação', () => {
-  it('Pegar informações do usuário com falha.', async () => {
-    const response = await request(app.callback()).get('/v1/users/1');
-    expect(response.status).toBe(404);
-  });
-
-  it('Pegar informações do usuário com sucesso.', async () => {
-    const response = await request(app.callback()).get('/v1/users/4');
-    expect(response.status).toBe(200);
-  });
-
-  it('Registra usuário com sucesso.', async () => {    
+  it('Registra usuário com sucesso.', async () => {
     const response = await request(app.callback())
       .post('/v1/users/register')
       .send({
-        username: 'usera',
+        username: 'user',
         password: 'password',
-        name: 'user a',
-        email: 'user.a@user.com'
+        name: 'user',
+        email: 'user@user.com'
       });
     expect(response.status).toBe(201);
-    expect(response.body.message).toEqual('Usuário criado com sucesso.'); 
+    expect(response.body.message).toEqual('Usuário criado com sucesso.');
   });
 
   it('impede registro com nome de usuário que já existe', async () => {
     const response = await request(app.callback())
       .post('/v1/users/register')
       .send({
-        username: 'usera',
+        username: 'user',
         password: 'password',
-        name: 'user a',
-        email: 'user.a@user.com'
+        name: 'user',
+        email: 'user@user.com'
       });
     expect(response.status).toBe(409);
   });
@@ -41,7 +31,7 @@ describe('Autenticação', () => {
     const response = await request(app.callback())
       .post('/v1/users/login')
       .send({
-        username: 'usera',
+        username: 'user',
         password: 'password'
       });
     expect(response.status).toBe(200);
@@ -51,7 +41,7 @@ describe('Autenticação', () => {
     const response = await request(app.callback())
       .post('/v1/users/login')
       .send({
-        username: 'userb',
+        username: 'user1',
         password: 'password'
       });
     expect(response.status).toBe(404);
@@ -61,9 +51,34 @@ describe('Autenticação', () => {
     const response = await request(app.callback())
       .post('/v1/users/login')
       .send({
-        username: 'usera',
+        username: 'user',
         password: 'password1'
       });
+    expect(response.status).toBe(401);
+  });
+
+  it('Login de usuário com falha desconhecida.', async () => {
+    const response = await request(app.callback())
+      .post('/v1/users/login')
+      .send({
+        username: 'user'
+      });
+    expect(response.status).toBe(500);
+  });
+
+  it('Pegar informações do usuário com sucesso.', async () => {
+    const login = await request(app.callback()).post('/v1/users/login').send({
+      username: 'user',
+      password: 'password'
+    });
+    const response = await request(app.callback())
+      .get('/v1/users/1')
+      .auth(login.body.access_token, { type: 'bearer' });
+    expect(response.status).toBe(200);
+  });
+
+  it('Pegar informações do usuário com falha.', async () => {
+    const response = await request(app.callback()).get('/v1/users/1');
     expect(response.status).toBe(401);
   });
 });

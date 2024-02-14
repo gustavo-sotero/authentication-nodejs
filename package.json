@@ -6,6 +6,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
+    "prisma:init": "npx prisma migrate dev --name init",
     "dev": "tsx --watch ./src/index.ts"
   },
   "author": "Gustavo Sotero",
